@@ -81,15 +81,21 @@ if (isset($_POST['content'])) {
             //serialized php variable
             $nice = var_export(unserialize($content), true);
         } else {
-            if (strpos(substr($content, 0, 60), 'version=\"1.0\"') !== false) {
+            //xml
+            $sub = substr($content, 0, 60);
+            if (strpos($sub, 'version=\"1.0\"') !== false) {
                 //escaped string copied from e.g. firebug
                 $content = str_replace(
                     array('\"', '\/', '\n'),
                     array('"', '/', "\n"),
                     $content
                 );
+            } else if (strpos($sub, '<' . '?xml ') === false
+                && strpos($sub, '&lt;?xml ') !== false
+            ) {
+                // encoded XML
+                $content = htmlspecialchars_decode($content);
             }
-            //xml
             $descriptorspec = array(
                 0 => array('pipe', 'r'),//stdin
                 1 => array('pipe', 'w'),//stdout
