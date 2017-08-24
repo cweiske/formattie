@@ -72,11 +72,11 @@ if (isset($_POST['content'])) {
                 }
                 echo '<p class="error">JSON error: ' . $json_errors[json_last_error()] . '</p>';
             }
-            $nice = json_encode($data, JSON_PRETTY_PRINT);
-            //echo '<h2>PHP object</h2>';
-            //echo '<pre>' . htmlspecialchars(var_export($data, true)) . '</pre>';
+            $nice = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            //to make it easier to copy values from the pretty print
+            $noquotes = str_replace(['\\"', '\\\\'], ['"', '\\'], $nice);
             echo '<h2 id="json">Pretty JSON</h2>';
-            echo '<pre>' . htmlspecialchars($nice) . '</pre>';
+            echo '<pre>' . htmlspecialchars($noquotes) . '</pre>';
         } else if (strpos(substr($content, 0, 64), ':{') !== false) {
             //serialized php variable
             $nice = var_export(unserialize($content), true);
