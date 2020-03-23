@@ -17,6 +17,13 @@ Supported formats
 - URLs
 
 
+=====
+Setup
+=====
+Install geshi::
+
+  $ composer install
+
 =======
 License
 =======
