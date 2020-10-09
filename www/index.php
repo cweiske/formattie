@@ -58,7 +58,7 @@ if (isset($_POST['content'])) {
             }
             $nice = var_export($parts, true);
             echo '<pre>' . htmlspecialchars($nice) . '</pre>';
-        } else if ($content{0} == '{' || $content{0} == '[') {
+        } else if ($content[0] == '{' || $content[0] == '[') {
             //json
             $data = json_decode($content);
             if ($data === null) {
