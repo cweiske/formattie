@@ -32,6 +32,7 @@ if (isset($_POST['content'])) {
                 $content
             );
         }
+
         if (is_numeric($content) && strlen(trim($content)) <= 10) {
             //unix timestamp
             $content = trim($content);
@@ -48,6 +49,7 @@ if (isset($_POST['content'])) {
                 . '<td>' . date('T P, e') . '</td>'
                 . '<td><tt>' . date('c', $content) . '</tt></td></tr>'
             . '</table>';
+
         } else if (strpos(substr($content, 0, 10), '://') !== false
             || substr($content, 0, 7) == 'mailto:'
         ) {
@@ -62,6 +64,7 @@ if (isset($_POST['content'])) {
             }
             $nice = var_export($parts, true);
             echo '<pre>' . htmlspecialchars($nice) . '</pre>';
+
         } else if ($content[0] == '{' || $content[0] == '[') {
             //json
             $data = json_decode($content);
@@ -81,6 +84,7 @@ if (isset($_POST['content'])) {
             $noquotes = str_replace(['\\"', '\\\\'], ['"', '\\'], $nice);
             echo '<h2 id="json">Pretty JSON</h2>';
             echo '<pre>' . htmlspecialchars($noquotes) . '</pre>';
+
         } else if (strpos(substr($content, 0, 64), ':{') !== false) {
             //serialized php variable
             $nice = var_export(unserialize($content), true);
