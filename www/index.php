@@ -69,15 +69,7 @@ if (isset($_POST['content'])) {
             //json
             $data = json_decode($content);
             if ($data === null) {
-                // Define the errors.
-                $constants = get_defined_constants(true);
-                $json_errors = array();
-                foreach ($constants["json"] as $name => $value) {
-                    if (!strncmp($name, "JSON_ERROR_", 11)) {
-                        $json_errors[$value] = $name;
-                    }
-                }
-                echo '<p class="error">JSON error: ' . $json_errors[json_last_error()] . '</p>';
+                echo '<p class="error">JSON error: ' . json_last_error_msg() . '</p>';
             }
             $nice = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             //to make it easier to copy values from the pretty print
