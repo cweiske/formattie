@@ -7,12 +7,16 @@
  <body>
   <form action="/" method="POST">
    <a href="/" target="_blank">new tab</a><br/>
-   <textarea id="content" name="content" rows="15" cols="80"><![CDATA[<?php
+   <textarea id="content" name="content" rows="15" cols="80"><?php
 if (isset($_POST['content'])) {
     $_POST['content'] = ltrim($_POST['content']);
-    echo $_POST['content'];
+    if (strpos($_POST['content'], ']]>') === false) {
+        echo '<![CDATA[' . $_POST['content'] . ']]>';
+    } else {
+        echo htmlspecialchars($_POST['content']);
+    }
 }
-?>]]></textarea>
+?></textarea>
    <br/>
    <input type="submit" value="Submit"/>
    <input type="button" value="Clear" onclick="javascript:document.getElementById('content').value='';"/>
@@ -135,7 +139,12 @@ if (isset($_POST['content'])) {
         }
 
         echo '<hr/>';
-        echo '<textarea rows="10" cols="80"><![CDATA[' . $nice . ']]></textarea>';
+        if (strpos($nice, ']]>') === false) {
+            $encoded = '<![CDATA[' . $nice . ']]>';
+        } else {
+            $encoded = htmlspecialchars($nice);
+        }
+        echo '<textarea rows="10" cols="80">' . $encoded . '</textarea>';
     }
 ?>
   <script type="text/javascript">
