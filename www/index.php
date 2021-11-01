@@ -80,6 +80,52 @@ if (isset($_POST['content'])) {
         } else if (strpos(substr($content, 0, 64), ':{') !== false) {
             //serialized php variable
             $nice = var_export(unserialize($content), true);
+
+        } else if (strpos(substr($content, 0, 512), '.') !== false
+            && preg_match('#^[a-zA-Z0-9+/=.]+$#', substr($content, 0, 512))
+        ) {
+            //JWT
+            $parts = explode('.', $content);
+            $jose = base64_decode($parts[0]);
+            $isJwt = false;
+            if ($jose === false) {
+                echo '<p class="error">Cannot base64-decode JOSE header.</p>';
+            } else {
+                $joseData = json_decode($jose);
+                if ($joseData === null) {
+                    echo '<p class="error">JSON error: ' . json_last_error_msg() . '</p>';
+                } else {
+                    $nice = json_encode($joseData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+                    //to make it easier to copy values from the pretty print
+                    $noquotes = str_replace(['\\"', '\\\\'], ['"', '\\'], $nice);
+                    echo '<h2 id="jwt">JWT JOSE header</h2>';
+                    echo '<pre>' . htmlspecialchars($noquotes) . '</pre>';
+
+                    $isJwt = isset($joseData->typ) && $joseData->typ == 'JWT';
+                }
+            }
+
+            if ($isJwt) {
+                $jwt = base64_decode($parts[1]);
+                if ($jwt === false) {
+                    echo '<p class="error">Cannot base64-decode JWT contents.</p>';
+                } else {
+                    $jwtData = json_decode($jwt);
+                    if ($jwtData === null) {
+                        echo '<p class="error">JSON error: ' . json_last_error_msg() . '</p>';
+                    } else {
+                        $nice2 = json_encode($jwtData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                        $nice .= "\n" . $nice2;
+
+                        //to make it easier to copy values from the pretty print
+                        $noquotes = str_replace(['\\"', '\\\\'], ['"', '\\'], $nice2);
+                        echo '<h2 id="jwt-data">JWT data</h2>';
+                        echo '<pre>' . htmlspecialchars($noquotes) . '</pre>';
+                    }
+                }
+            }
+
         } else {
             //xml
             $sub = substr($content, 0, 60);
