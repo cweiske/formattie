@@ -33,9 +33,13 @@ if (isset($_POST['content'])) {
             );
         }
 
-        if (is_numeric($content) && strlen(trim($content)) <= 10) {
+        if (is_numeric($content) && strlen(trim($content)) <= 13) {
             //unix timestamp
             $content = trim($content);
+            if (strlen($content) === 13) {
+                //milliseconds
+                $content = $content / 1000;
+            }
             $nice = 'UTC:   ' . gmdate('c', $content) . "\n"
                 . 'Local: ' . date('c', $content);
 
