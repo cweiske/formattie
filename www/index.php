@@ -33,6 +33,10 @@ if (isset($_POST['content'])) {
             );
         }
 
+        if (preg_match('#^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[A-Z]{0,4}#', $content)) {
+            $content = strtotime($content);
+        }
+
         if (is_numeric($content) && strlen(trim($content)) <= 13) {
             //unix timestamp
             $content = trim($content);
