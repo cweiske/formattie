@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
  <head>
   <title>formattie</title>
+  <link rel="stylesheet" type="text/css"  href="style.css"/>
  </head>
  <body>
   <form action="/" method="POST">
@@ -133,6 +134,34 @@ if (isset($_POST['content'])) {
                     }
                 }
             }
+
+        } else if (str_starts_with($content, 'SELECT')
+            || str_starts_with($content, 'DELETE')
+            || str_starts_with($content, 'INSERT')
+            || str_starts_with($content, 'UPDATE')
+        ) {
+            //SQL
+            require_once __DIR__ . '/../vendor/autoload.php';
+
+            //lint
+            $lexer  = new \PhpMyAdmin\SqlParser\Lexer($content, false);
+            $parser = new \PhpMyAdmin\SqlParser\Parser($lexer->list);
+            $errors = PhpMyAdmin\SqlParser\Utils\Error::get([$lexer, $parser]);
+            if ($errors === []) {
+                echo "<p class='valid'>SQL is valid</p>\n";
+            } else {
+                $lines = PhpMyAdmin\SqlParser\Utils\Error::format($errors);
+                echo "<p class='errors'>SQL is invalid:\n<ul>";
+                foreach ($lines as $line) {
+                    echo '<li>' . htmlspecialchars($line) . "</li>\n";
+                }
+                echo "</ul></p>\n";
+            }
+
+            //format
+            $nice = PhpMyAdmin\SqlParser\Utils\Formatter::format($content);
+            $html = PhpMyAdmin\SqlParser\Utils\Formatter::format($content, ['type' => 'html']);
+            echo '<pre class="sql">' . $html . '</pre>';
 
         } else {
             //xml

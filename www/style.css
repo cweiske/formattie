@@ -1,0 +1,9 @@
+.sql .sql-reserved {
+    font-weight: bold;
+}
+.sql .sql-variable {
+    color: green;
+}
+.sql .sql-number {
+    color: blue;
+}
