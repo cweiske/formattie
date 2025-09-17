@@ -1,5 +1,6 @@
 {
     "require": {
-        "geshi/geshi": "v1.0.9.1"
+        "geshi/geshi": "v1.0.9.1",
+        "phpmyadmin/sql-parser": "^5.11"
     }
 }
