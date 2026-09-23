@@ -11,10 +11,13 @@ Useful for pasting XML-without-linebreaks from Firebug.
 Supported formats
 =================
 
-- XML
 - Serialized PHP variable
 - JSON
+- JWT (JSON Web Token)
+- SQL
 - URLs
+- unix timestamps
+- XML
 
 
 =====
