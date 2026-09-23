@@ -91,7 +91,7 @@ if (isset($_POST['content'])) {
             $nice = var_export(unserialize($content), true);
 
         } else if (strpos(substr($content, 0, 512), '.') !== false
-            && preg_match('#^[a-zA-Z0-9+/=.]+$#', substr($content, 0, 512))
+            && preg_match('#^[a-zA-Z0-9+/=_.-]+$#', substr($content, 0, 512))
         ) {
             //JWT
             $parts = explode('.', $content);
@@ -131,6 +131,42 @@ if (isset($_POST['content'])) {
                         $noquotes = str_replace(['\\"', '\\\\'], ['"', '\\'], $nice2);
                         echo '<h2 id="jwt-data">JWT data</h2>';
                         echo '<pre>' . htmlspecialchars($noquotes) . '</pre>';
+
+                        $dates = [];
+                        $now = time();
+                        if (isset($jwtData->iat)) {
+                            $dates[] = [
+                                'title' => 'Issued at',
+                                'timestamp' => $jwtData->iat,
+                                'error' => false,
+                            ];
+                        }
+                        if (isset($jwtData->nbf)) {
+                            $dates[] = [
+                                'title' => 'Not before',
+                                'timestamp' => $jwtData->nbf,
+                                'error' => $now < $jwtData->nbf,
+                            ];
+                        }
+                        if (isset($jwtData->exp)) {
+                            $dates[] = [
+                                'title' => 'Expires',
+                                'timestamp' => $jwtData->exp,
+                                'error' => $now > $jwtData->exp
+                            ];
+                        }
+                        if (count($dates)) {
+                            echo "<table border='1'>\n";
+                            $now = time();
+                            foreach ($dates as $dateInfo) {
+                                $bgcolor = $dateInfo['error'] ? 'mistyrose' : 'inherit';
+                                echo '<tr>'
+                                    . '<td>' . htmlspecialchars($dateInfo['title']) . '</td>'
+                                    . '<td style="background-color: ' . $bgcolor . '">' . date('Y-m-d H:i:s', $dateInfo['timestamp']) . '</td>'
+                                    . "</tr>\n";
+                            }
+                            echo "</table>\n";
+                        }
                     }
                 }
             }
